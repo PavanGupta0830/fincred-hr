@@ -1,0 +1,2162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinCred HR — Employee Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary-start: #7C3AED;
+      --primary-end: #4F46E5;
+      --primary-gradient: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+      --bg-main: #F5F6FA;
+      --bg-card: #FFFFFF;
+      --text-main: #111827;
+      --text-muted: #6B7280;
+      --border-color: #E5E7EB;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 1px 3px rgba(17, 24, 39, 0.06), 0 1px 2px rgba(17, 24, 39, 0.04);
+      --shadow-md: 0 10px 25px -5px rgba(79, 70, 229, 0.12), 0 4px 10px -2px rgba(17, 24, 39, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Sora', sans-serif;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ---------------- LOGIN PAGE ---------------- */
+    .login-wrapper {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      background: #FFFFFF;
+    }
+
+    .login-art {
+      background: var(--primary-gradient);
+      position: relative;
+      overflow: hidden;
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #FFFFFF;
+    }
+
+    .login-art::before {
+      content: '';
+      position: absolute;
+      width: 480px;
+      height: 480px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 70%);
+      top: -120px;
+      right: -120px;
+    }
+
+    .login-art::after {
+      content: '';
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.35) 0%, rgba(236, 72, 153, 0) 70%);
+      bottom: -80px;
+      left: -80px;
+    }
+
+    .login-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1;
+    }
+
+    .login-brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-hero {
+      z-index: 1;
+      max-width: 460px;
+    }
+
+    .login-hero h1 {
+      font-size: 2.5rem;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .login-hero p {
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .login-feature-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      z-index: 1;
+    }
+
+    .login-pill {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(6px);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .login-form-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-card h2 {
+      font-size: 1.75rem;
+      margin-bottom: 8px;
+    }
+
+    .login-card .subtitle {
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+    }
+
+    .demo-creds {
+      margin-top: 20px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: #F5F3FF;
+      border: 1px solid #DDD6FE;
+      font-size: 0.82rem;
+      color: #4C1D95;
+    }
+
+    /* ---------------- APP SHELL ---------------- */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: var(--primary-gradient);
+      color: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 30;
+      transition: transform 0.25s ease;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 10px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      margin-bottom: 20px;
+    }
+
+    .sidebar-brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-brand span {
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.82);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 500;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-align: left;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFFFFF;
+    }
+
+    .nav-btn.active {
+      background: #FFFFFF;
+      color: #4F46E5;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 16px;
+    }
+
+    .logout-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s ease;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .main-area {
+      flex: 1;
+      margin-left: 260px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 6px;
+      cursor: pointer;
+    }
+
+    .topbar-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .topbar-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .topbar-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .content-container {
+      padding: 26px 28px;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* ---------------- DASHBOARD ---------------- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      color: #FFFFFF;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 118px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card.blue { background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); }
+    .stat-card.green { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
+    .stat-card.orange { background: linear-gradient(135deg, #F59E0B 0%, #EA580C 100%); }
+    .stat-card.pink { background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%); }
+    .stat-card.cyan { background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%); }
+
+    .stat-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      font-weight: 500;
+      opacity: 0.92;
+    }
+
+    .stat-card-value {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    .dash-row-2 {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .dash-row-3 {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .chart-box {
+      position: relative;
+      height: 250px;
+      width: 100%;
+    }
+
+    .emp-pos-list {
+      overflow-y: auto;
+      max-height: 250px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 4px;
+    }
+
+    .emp-pos-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #F9FAFB;
+      border: 1px solid #F3F4F6;
+    }
+
+    .emp-pos-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .emp-pos-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .emp-pos-dept {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .pos-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* ---------------- TOOLBAR & TABLES ---------------- */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .toolbar {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .toolbar-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 220px;
+      flex: 1;
+      max-width: 300px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      width: 16px;
+      height: 16px;
+    }
+
+    .input, .select, .textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      background: #FFFFFF;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .search-box .input {
+      padding-left: 36px;
+    }
+
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: #7C3AED;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+    }
+
+    .filter-select {
+      width: auto;
+      min-width: 145px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: #FFFFFF;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.94;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #F3F4F6;
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: #E5E7EB;
+    }
+
+    .btn-outline-violet {
+      background: #F5F3FF;
+      color: #6D28D9;
+      border: 1px solid #DDD6FE;
+      padding: 6px 10px;
+      font-size: 0.78rem;
+    }
+
+    .btn-outline-violet:hover {
+      background: #EDE9FE;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: #F9FAFB;
+      padding: 12px 16px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 13px 16px;
+      font-size: 0.88rem;
+      border-bottom: 1px solid #F3F4F6;
+      vertical-align: middle;
+    }
+
+    tr:hover td {
+      background: #FAFAFF;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #EDE9FE;
+      flex-shrink: 0;
+    }
+
+    .emp-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-green { background: #ECFDF5; color: #047857; }
+    .badge-amber { background: #FFFBEB; color: #B45309; }
+    .badge-red { background: #FEF2F2; color: #B91C1C; }
+    .badge-blue { background: #EFF6FF; color: #1D4ED8; }
+    .badge-violet { background: #F5F3FF; color: #6D28D9; }
+    .badge-gray { background: #F3F4F6; color: #374151; }
+
+    .actions-cell {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: #FFFFFF;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      color: #4F46E5;
+      border-color: #C4B5FD;
+      background: #F5F3FF;
+    }
+
+    .icon-btn.delete:hover {
+      color: #DC2626;
+      border-color: #FECACA;
+      background: #FEF2F2;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    /* ---------------- MODAL ---------------- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.55);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+    }
+
+    .modal {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-md);
+    }
+
+    .modal-header {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h3 {
+      font-size: 1.1rem;
+    }
+
+    .modal-body {
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .modal-footer {
+      padding: 16px 22px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .avatar-upload-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .avatar-preview {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #DDD6FE;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #111827;
+      color: #FFFFFF;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-md);
+      z-index: 100;
+    }
+
+    .toast.error {
+      background: #DC2626;
+    }
+
+    @media (max-width: 1200px) {
+      .stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .dash-row-2 { grid-template-columns: 1fr 1fr; }
+      .dash-row-3 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 900px) {
+      .login-wrapper { grid-template-columns: 1fr; }
+      .login-art { display: none; }
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-area { margin-left: 0; }
+      .mobile-menu-btn { display: inline-flex; }
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dash-row-2 { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= LOGIN VIEW ================= -->
+  <section id="login-view" class="login-wrapper">
+    <div class="login-art">
+      <div class="login-brand">
+        <div class="login-brand-icon">
+          <i data-lucide="sparkles" width="24" height="24"></i>
+        </div>
+        <span class="font-display" style="font-size: 1.4rem; font-weight: 700;">FinCred HR</span>
+      </div>
+
+      <div class="login-hero">
+        <h1>Modern People Operations, Built for Speed.</h1>
+        <p>Manage employees, departments, role assignments, attendance logs, leave approvals, and payroll runs in one unified workspace.</p>
+      </div>
+
+      <div class="login-feature-pills">
+        <span class="login-pill">Live Analytics</span>
+        <span class="login-pill">Role Assignment</span>
+        <span class="login-pill">Auto-Synced Payroll</span>
+        <span class="login-pill">Supabase Powered</span>
+      </div>
+    </div>
+
+    <div class="login-form-panel">
+      <div class="login-card">
+        <h2>Welcome back</h2>
+        <p class="subtitle">Sign in to access your FinCred HR workspace.</p>
+        <form id="login-form" style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="form-group">
+            <label for="login-email">Work Email</label>
+            <input id="login-email" type="email" class="input" placeholder="admin@javagoat.hr" required />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input id="login-password" type="password" class="input" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 11px;">
+            <i data-lucide="log-in" width="18" height="18"></i>
+            Sign In
+          </button>
+        </form>
+        <div class="demo-creds">
+          <strong>Demo Credentials:</strong><br />
+          Email: <span class="font-mono">admin@javagoat.hr</span><br />
+          Password: <span class="font-mono">password123</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MAIN APP SHELL ================= -->
+  <div id="app-shell" class="app-shell hidden">
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-logo">
+          <i data-lucide="layers" width="20" height="20"></i>
+        </div>
+        <span>FinCred HR</span>
+      </div>
+
+      <ul class="nav-list">
+        <li><button class="nav-btn active" data-route="dashboard"><i data-lucide="layout-dashboard" width="18" height="18"></i>Dashboard</button></li>
+        <li><button class="nav-btn" data-route="employees"><i data-lucide="users" width="18" height="18"></i>Employees</button></li>
+        <li><button class="nav-btn" data-route="departments"><i data-lucide="building-2" width="18" height="18"></i>Departments</button></li>
+        <li><button class="nav-btn" data-route="positions"><i data-lucide="briefcase" width="18" height="18"></i>Positions</button></li>
+        <li><button class="nav-btn" data-route="attendance"><i data-lucide="calendar-check" width="18" height="18"></i>Attendance</button></li>
+        <li><button class="nav-btn" data-route="leaves"><i data-lucide="calendar-off" width="18" height="18"></i>Leaves</button></li>
+        <li><button class="nav-btn" data-route="payroll"><i data-lucide="wallet" width="18" height="18"></i>Payroll</button></li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="logout-btn">
+          <i data-lucide="log-out" width="18" height="18"></i>
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle Menu">
+            <i data-lucide="menu" width="20" height="20"></i>
+          </button>
+          <h1 id="page-title" class="topbar-title">Dashboard</h1>
+        </div>
+        <div class="topbar-user">
+          <span>admin@javagoat.hr</span>
+          <div class="topbar-avatar">HR</div>
+        </div>
+      </header>
+
+      <main id="page-content" class="content-container"></main>
+    </div>
+  </div>
+
+  <!-- ================= MODAL ================= -->
+  <div id="modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Modal Title</h3>
+        <button id="modal-close-btn" class="icon-btn" aria-label="Close">
+          <i data-lucide="x" width="18" height="18"></i>
+        </button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+      <div id="modal-footer" class="modal-footer"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    const TOKEN_KEY = 'fincred_hr_token';
+    const DEFAULT_AVATAR = 'https://api.dicebear.com/7.x/initials/svg?backgroundColor=6D28D9';
+
+    const state = {
+      route: 'dashboard',
+      employees: [],
+      departments: [],
+      positions: [],
+      attendance: [],
+      leaves: [],
+      payroll: [],
+      dashboard: null,
+      charts: {},
+      filters: {
+        employees: { search: '', status: '', department: '' },
+        departments: { search: '', manager: '' },
+        positions: { search: '', department: '', level: '' },
+        attendance: { search: '', status: '', dateFrom: '', dateTo: '' },
+        leaves: { search: '', status: '', type: '' },
+        payroll: { search: '', status: '', period: '' }
+      }
+    };
+
+    const PILL_COLORS = [
+      { bg: '#EDE9FE', fg: '#6D28D9' },
+      { bg: '#DBEAFE', fg: '#1D4ED8' },
+      { bg: '#D1FAE5', fg: '#047857' },
+      { bg: '#FCE7F3', fg: '#BE185D' },
+      { bg: '#FEF3C7', fg: '#B45309' },
+      { bg: '#CFFAFE', fg: '#0E7490' }
+    ];
+
+    const DISTINCT_CHART_COLORS = [
+      '#7C3AED', '#10B981', '#F59E0B', '#EC4899', '#06B6D4', '#EF4444', '#84CC16', '#3B82F6'
+    ];
+
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = isError ? 'toast error' : 'toast';
+      toast.classList.remove('hidden');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toast.classList.add('hidden'), 3200);
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getAvatarUrl(emp) {
+      if (emp && emp.profile_pic) return emp.profile_pic;
+      const seed = encodeURIComponent((emp && emp.full_name) ? emp.full_name : 'Employee');
+      return `${DEFAULT_AVATAR}&seed=${seed}`;
+    }
+
+    async function apiFetch(url, options = {}) {
+      const token = localStorage.getItem(TOKEN_KEY);
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const res = await fetch(url, { ...options, headers });
+      const data = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        localStorage.removeItem(TOKEN_KEY);
+        showLogin();
+        throw new Error(data.error || 'Session expired');
+      }
+      if (!res.ok) {
+        throw new Error(data.error || 'Request failed');
+      }
+      return data;
+    }
+
+    // ---------------- AUTH & ROUTING ----------------
+    function showLogin() {
+      document.getElementById('login-view').classList.remove('hidden');
+      document.getElementById('app-shell').classList.add('hidden');
+      lucide.createIcons();
+    }
+
+    function showApp() {
+      document.getElementById('login-view').classList.add('hidden');
+      document.getElementById('app-shell').classList.remove('hidden');
+      const hashRoute = window.location.hash.replace('#', '');
+      const valid = ['dashboard', 'employees', 'departments', 'positions', 'attendance', 'leaves', 'payroll'];
+      navigateTo(valid.includes(hashRoute) ? hashRoute : 'dashboard');
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+        localStorage.setItem(TOKEN_KEY, data.token);
+        showToast('Signed in successfully');
+        showApp();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem(TOKEN_KEY);
+      showLogin();
+    });
+
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    document.querySelectorAll('.nav-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.remove('open');
+        navigateTo(btn.dataset.route);
+      });
+    });
+
+    async function navigateTo(route) {
+      state.route = route;
+      window.location.hash = route;
+      document.querySelectorAll('.nav-btn').forEach((b) => {
+        b.classList.toggle('active', b.dataset.route === route);
+      });
+      const titles = {
+        dashboard: 'Dashboard',
+        employees: 'Employees',
+        departments: 'Departments',
+        positions: 'Positions',
+        attendance: 'Attendance',
+        leaves: 'Leave Requests',
+        payroll: 'Payroll Management'
+      };
+      document.getElementById('page-title').textContent = titles[route] || 'Dashboard';
+      await loadRouteData(route);
+      renderRoute();
+    }
+
+    async function loadRouteData(route) {
+      try {
+        if (route === 'dashboard') {
+          state.dashboard = await apiFetch('/api/dashboard/stats');
+        } else {
+          const [emps, depts, pos, att, lvs, pay] = await Promise.all([
+            apiFetch('/api/employees'),
+            apiFetch('/api/departments'),
+            apiFetch('/api/positions'),
+            route === 'attendance' ? apiFetch('/api/attendance') : Promise.resolve(state.attendance),
+            route === 'leaves' ? apiFetch('/api/leaves') : Promise.resolve(state.leaves),
+            route === 'payroll' ? apiFetch('/api/payroll') : Promise.resolve(state.payroll)
+          ]);
+          state.employees = emps;
+          state.departments = depts;
+          state.positions = pos;
+          if (route === 'attendance') state.attendance = att;
+          if (route === 'leaves') state.leaves = lvs;
+          if (route === 'payroll') state.payroll = pay;
+        }
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    function destroyCharts() {
+      Object.values(state.charts).forEach((ch) => ch && ch.destroy());
+      state.charts = {};
+    }
+
+    function renderRoute() {
+      destroyCharts();
+      const container = document.getElementById('page-content');
+      if (state.route === 'dashboard') renderDashboard(container);
+      else if (state.route === 'employees') renderEmployees(container);
+      else if (state.route === 'departments') renderDepartments(container);
+      else if (state.route === 'positions') renderPositions(container);
+      else if (state.route === 'attendance') renderAttendance(container);
+      else if (state.route === 'leaves') renderLeaves(container);
+      else if (state.route === 'payroll') renderPayroll(container);
+      lucide.createIcons();
+    }
+
+    // ---------------- DASHBOARD ----------------
+    function renderDashboard(container) {
+      const d = state.dashboard || {
+        cards: { total_employees: 0, active_employees: 0, total_departments: 0, pending_leaves: 0, monthly_payroll: 0 },
+        hiring_trend: { labels: [], data: [] },
+        department_mix: { labels: [], data: [] },
+        employees_by_position: [],
+        attendance_trend: { labels: [], present: [], late: [], absent: [] },
+        status_breakdown: { labels: [], data: [] }
+      };
+
+      const empRows = d.employees_by_position.length
+        ? d.employees_by_position.map((e, idx) => {
+            const c = PILL_COLORS[idx % PILL_COLORS.length];
+            return `
+              <div class="emp-pos-item">
+                <div class="emp-pos-left">
+                  <img class="avatar" src="${escapeHtml(getAvatarUrl(e))}" alt="${escapeHtml(e.full_name)}" />
+                  <div style="min-width:0;">
+                    <div class="emp-pos-name">${escapeHtml(e.full_name)}</div>
+                    <div class="emp-pos-dept">${escapeHtml(e.department_name)}</div>
+                  </div>
+                </div>
+                <span class="pos-pill" style="background:${c.bg}; color:${c.fg};">${escapeHtml(e.position_title)}</span>
+              </div>`;
+          }).join('')
+        : '<div class="empty-state">No employees found.</div>';
+
+      container.innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-card blue">
+            <div class="stat-card-top"><span>Total Employees</span><i data-lucide="users" width="18" height="18"></i></div>
+            <div class="stat-card-value">${d.cards.total_employees}</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-card-top"><span>Active Staff</span><i data-lucide="user-check" width="18" height="18"></i></div>
+            <div class="stat-card-value">${d.cards.active_employees}</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-card-top"><span>Departments</span><i data-lucide="building-2" width="18" height="18"></i></div>
+            <div class="stat-card-value">${d.cards.total_departments}</div>
+          </div>
+          <div class="stat-card pink">
+            <div class="stat-card-top"><span>Pending Leaves</span><i data-lucide="clock" width="18" height="18"></i></div>
+            <div class="stat-card-value">${d.cards.pending_leaves}</div>
+          </div>
+          <div class="stat-card cyan">
+            <div class="stat-card-top"><span>Monthly Payroll</span><i data-lucide="indian-rupee" width="18" height="18"></i></div>
+            <div class="stat-card-value">₹${Number(d.cards.monthly_payroll || 0).toLocaleString()}</div>
+          </div>
+        </div>
+
+        <div class="dash-row-2">
+          <div class="panel">
+            <div class="panel-header"><h3 class="panel-title">Hiring Trend</h3></div>
+            <div class="chart-box"><canvas id="chart-hiring"></canvas></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3 class="panel-title">Department Mix</h3></div>
+            <div class="chart-box"><canvas id="chart-dept"></canvas></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3 class="panel-title">Employees by Position</h3></div>
+            <div class="emp-pos-list">${empRows}</div>
+          </div>
+        </div>
+
+        <div class="dash-row-3">
+          <div class="panel">
+            <div class="panel-header"><h3 class="panel-title">Attendance Trend (Last 7 Days)</h3></div>
+            <div class="chart-box"><canvas id="chart-attendance"></canvas></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3 class="panel-title">Status Breakdown</h3></div>
+            <div class="chart-box"><canvas id="chart-status"></canvas></div>
+          </div>
+        </div>
+      `;
+
+      state.charts.hiring = new Chart(document.getElementById('chart-hiring'), {
+        type: 'bar',
+        data: {
+          labels: d.hiring_trend.labels,
+          datasets: [{
+            label: 'New Hires',
+            data: d.hiring_trend.data,
+            backgroundColor: '#7C3AED',
+            borderRadius: 8
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+
+      state.charts.dept = new Chart(document.getElementById('chart-dept'), {
+        type: 'doughnut',
+        data: {
+          labels: d.department_mix.labels,
+          datasets: [{
+            data: d.department_mix.data,
+            backgroundColor: d.department_mix.labels.map((_, i) => DISTINCT_CHART_COLORS[i % DISTINCT_CHART_COLORS.length]),
+            borderWidth: 2,
+            borderColor: '#FFFFFF'
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '62%' }
+      });
+
+      state.charts.attendance = new Chart(document.getElementById('chart-attendance'), {
+        type: 'line',
+        data: {
+          labels: d.attendance_trend.labels,
+          datasets: [
+            { label: 'Present', data: d.attendance_trend.present, borderColor: '#10B981', backgroundColor: 'rgba(16,185,129,0.12)', tension: 0.35, fill: true },
+            { label: 'Late', data: d.attendance_trend.late, borderColor: '#F59E0B', backgroundColor: 'rgba(245,158,11,0.12)', tension: 0.35, fill: true },
+            { label: 'Absent', data: d.attendance_trend.absent, borderColor: '#EF4444', backgroundColor: 'rgba(239,68,68,0.12)', tension: 0.35, fill: true }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      state.charts.status = new Chart(document.getElementById('chart-status'), {
+        type: 'doughnut',
+        data: {
+          labels: d.status_breakdown.labels,
+          datasets: [{
+            data: d.status_breakdown.data,
+            backgroundColor: ['#10B981', '#F59E0B', '#3B82F6', '#EF4444', '#8B5CF6'],
+            borderWidth: 2,
+            borderColor: '#FFFFFF'
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '62%' }
+      });
+    }
+
+    // ---------------- HELPERS ----------------
+    function statusBadge(status) {
+      const map = {
+        Active: 'badge-green', Present: 'badge-green', Approved: 'badge-green', Paid: 'badge-green',
+        Pending: 'badge-amber', Late: 'badge-amber', Probation: 'badge-blue', Processed: 'badge-blue',
+        'On Leave': 'badge-violet', 'Half Day': 'badge-violet',
+        Terminated: 'badge-red', Absent: 'badge-red', Rejected: 'badge-red'
+      };
+      return `<span class="badge ${map[status] || 'badge-gray'}">${escapeHtml(status)}</span>`;
+    }
+
+    function deptName(id) {
+      const d = state.departments.find((x) => x.id === id);
+      return d ? d.name : '—';
+    }
+
+    function posTitle(id) {
+      const p = state.positions.find((x) => x.id === id);
+      return p ? p.title : '—';
+    }
+
+    function empName(id) {
+      const e = state.employees.find((x) => x.id === id);
+      return e ? e.full_name : 'Unknown';
+    }
+
+    function resizeImageToBase64(file, maxSize = 200) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error('Failed to read image'));
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onerror = () => reject(new Error('Invalid image file'));
+          img.onload = () => {
+            let { width, height } = img;
+            if (width > maxSize || height > maxSize) {
+              if (width > height) {
+                height = Math.round((height * maxSize) / width);
+                width = maxSize;
+              } else {
+                width = Math.round((width * maxSize) / height);
+                height = maxSize;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.85));
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ---------------- EMPLOYEES ----------------
+    function renderEmployees(container) {
+      const f = state.filters.employees;
+      const filtered = state.employees.filter((e) => {
+        const q = f.search.toLowerCase();
+        const matchSearch = !q || e.full_name.toLowerCase().includes(q) || e.email.toLowerCase().includes(q) || e.employee_code.toLowerCase().includes(q);
+        const matchStatus = !f.status || e.status === f.status;
+        const matchDept = !f.department || e.department_id === f.department;
+        return matchSearch && matchStatus && matchDept;
+      });
+
+      container.innerHTML = `
+        <div class="section-card">
+          <div class="toolbar">
+            <div class="toolbar-filters">
+              <div class="search-box">
+                <i data-lucide="search"></i>
+                <input id="emp-search" class="input" placeholder="Search name, code, email..." value="${escapeHtml(f.search)}" />
+              </div>
+              <select id="emp-filter-dept" class="select filter-select">
+                <option value="">All Departments</option>
+                ${state.departments.map((d) => `<option value="${d.id}" ${f.department === d.id ? 'selected' : ''}>${escapeHtml(d.name)}</option>`).join('')}
+              </select>
+              <select id="emp-filter-status" class="select filter-select">
+                <option value="">All Statuses</option>
+                ${['Active', 'On Leave', 'Probation', 'Terminated'].map((s) => `<option value="${s}" ${f.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </div>
+            <button id="add-emp-btn" class="btn btn-primary"><i data-lucide="plus" width="16" height="16"></i>Add Employee</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Code</th>
+                  <th>Department</th>
+                  <th>Position</th>
+                  <th>Salary</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filtered.length ? filtered.map((e) => `
+                  <tr>
+                    <td>
+                      <div class="emp-cell">
+                        <img class="avatar" src="${escapeHtml(getAvatarUrl(e))}" alt="${escapeHtml(e.full_name)}" />
+                        <div>
+                          <div style="font-weight:600;">${escapeHtml(e.full_name)}</div>
+                          <div style="font-size:0.78rem; color:var(--text-muted);">${escapeHtml(e.email)}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="font-mono">${escapeHtml(e.employee_code)}</td>
+                    <td>${escapeHtml(deptName(e.department_id))}</td>
+                    <td>${escapeHtml(posTitle(e.position_id))}</td>
+                    <td class="font-mono">₹${Number(e.salary || 0).toLocaleString()}</td>
+                    <td>${statusBadge(e.status)}</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="icon-btn" onclick="openEmployeeModal('${e.id}')" title="Edit"><i data-lucide="pencil" width="15" height="15"></i></button>
+                        <button class="icon-btn delete" onclick="deleteEntity('employees', '${e.id}')" title="Delete"><i data-lucide="trash-2" width="15" height="15"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('') : '<tr><td colspan="7" class="empty-state">No employees match your filters.</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('emp-search').addEventListener('input', (e) => { state.filters.employees.search = e.target.value; renderRoute(); });
+      document.getElementById('emp-filter-dept').addEventListener('change', (e) => { state.filters.employees.department = e.target.value; renderRoute(); });
+      document.getElementById('emp-filter-status').addEventListener('change', (e) => { state.filters.employees.status = e.target.value; renderRoute(); });
+      document.getElementById('add-emp-btn').addEventListener('click', () => openEmployeeModal());
+    }
+
+    function openEmployeeModal(id = null) {
+      const emp = id ? state.employees.find((x) => x.id === id) : null;
+      let uploadedBase64 = emp ? (emp.profile_pic || '') : '';
+
+      openModal(emp ? 'Edit Employee' : 'Add Employee', `
+        <form id="entity-form" class="form-grid">
+          <div class="form-group full">
+            <label>Profile Picture (Max 200×200px)</label>
+            <div class="avatar-upload-row">
+              <img id="emp-avatar-preview" class="avatar-preview" src="${escapeHtml(getAvatarUrl(emp))}" alt="Preview" />
+              <input id="emp-pic-input" type="file" accept="image/*" class="input" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Employee Code *</label>
+            <input name="employee_code" class="input" value="${escapeHtml(emp?.employee_code || '')}" placeholder="EMP-001" required />
+          </div>
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input name="full_name" class="input" value="${escapeHtml(emp?.full_name || '')}" required />
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input name="email" type="email" class="input" value="${escapeHtml(emp?.email || '')}" required />
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input name="phone" class="input" value="${escapeHtml(emp?.phone || '')}" />
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <select name="department_id" class="select">
+              <option value="">Unassigned</option>
+              ${state.departments.map((d) => `<option value="${d.id}" ${emp?.department_id === d.id ? 'selected' : ''}>${escapeHtml(d.name)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Position</label>
+            <select name="position_id" class="select">
+              <option value="">Unassigned</option>
+              ${state.positions.map((p) => `<option value="${p.id}" ${emp?.position_id === p.id ? 'selected' : ''}>${escapeHtml(p.title)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Salary (₹)</label>
+            <input name="salary" type="number" step="0.01" class="input" value="${emp?.salary ?? 0}" required />
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status" class="select">
+              ${['Active', 'On Leave', 'Probation', 'Terminated'].map((s) => `<option value="${s}" ${(emp?.status || 'Active') === s ? 'selected' : ''}>${s}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Hire Date</label>
+            <input name="hire_date" type="date" class="input" value="${emp?.hire_date || new Date().toISOString().slice(0, 10)}" required />
+          </div>
+        </form>
+      `, async () => {
+        const form = document.getElementById('entity-form');
+        if (!form.reportValidity()) return;
+        const payload = Object.fromEntries(new FormData(form).entries());
+        payload.salary = Number(payload.salary || 0);
+        payload.profile_pic = uploadedBase64 || `${DEFAULT_AVATAR}&seed=${encodeURIComponent(payload.full_name)}`;
+        await saveEntity('employees', id, payload);
+      });
+
+      document.getElementById('emp-pic-input').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+          uploadedBase64 = await resizeImageToBase64(file, 200);
+          document.getElementById('emp-avatar-preview').src = uploadedBase64;
+        } catch (err) {
+          showToast(err.message, true);
+        }
+      });
+    }
+
+    // ---------------- DEPARTMENTS ----------------
+    function renderDepartments(container) {
+      const f = state.filters.departments;
+      const managers = [...new Set(state.departments.map((d) => d.manager_name).filter(Boolean))];
+      const filtered = state.departments.filter((d) => {
+        const q = f.search.toLowerCase();
+        const matchSearch = !q || d.name.toLowerCase().includes(q) || d.code.toLowerCase().includes(q);
+        const matchMgr = !f.manager || d.manager_name === f.manager;
+        return matchSearch && matchMgr;
+      });
+
+      container.innerHTML = `
+        <div class="section-card">
+          <div class="toolbar">
+            <div class="toolbar-filters">
+              <div class="search-box">
+                <i data-lucide="search"></i>
+                <input id="dept-search" class="input" placeholder="Search department or code..." value="${escapeHtml(f.search)}" />
+              </div>
+              <select id="dept-filter-mgr" class="select filter-select">
+                <option value="">All Managers</option>
+                ${managers.map((m) => `<option value="${escapeHtml(m)}" ${f.manager === m ? 'selected' : ''}>${escapeHtml(m)}</option>`).join('')}
+              </select>
+            </div>
+            <button id="add-dept-btn" class="btn btn-primary"><i data-lucide="plus" width="16" height="16"></i>Add Department</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Department</th>
+                  <th>Code</th>
+                  <th>Manager</th>
+                  <th>Headcount</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filtered.length ? filtered.map((d) => {
+                  const count = state.employees.filter((e) => e.department_id === d.id).length;
+                  return `
+                    <tr>
+                      <td style="font-weight:600;">${escapeHtml(d.name)}</td>
+                      <td class="font-mono">${escapeHtml(d.code)}</td>
+                      <td>${escapeHtml(d.manager_name || '—')}</td>
+                      <td><span class="badge badge-violet">${count} Staff</span></td>
+                      <td style="color:var(--text-muted);">${escapeHtml(d.description || '—')}</td>
+                      <td>
+                        <div class="actions-cell">
+                          <button class="icon-btn" onclick="openDepartmentModal('${d.id}')" title="Edit"><i data-lucide="pencil" width="15" height="15"></i></button>
+                          <button class="icon-btn delete" onclick="deleteEntity('departments', '${d.id}')" title="Delete"><i data-lucide="trash-2" width="15" height="15"></i></button>
+                        </div>
+                      </td>
+                    </tr>`;
+                }).join('') : '<tr><td colspan="6" class="empty-state">No departments found.</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('dept-search').addEventListener('input', (e) => { state.filters.departments.search = e.target.value; renderRoute(); });
+      document.getElementById('dept-filter-mgr').addEventListener('change', (e) => { state.filters.departments.manager = e.target.value; renderRoute(); });
+      document.getElementById('add-dept-btn').addEventListener('click', () => openDepartmentModal());
+    }
+
+    function openDepartmentModal(id = null) {
+      const dept = id ? state.departments.find((x) => x.id === id) : null;
+      openModal(dept ? 'Edit Department' : 'Add Department', `
+        <form id="entity-form" class="form-grid">
+          <div class="form-group">
+            <label>Department Name *</label>
+            <input name="name" class="input" value="${escapeHtml(dept?.name || '')}" required />
+          </div>
+          <div class="form-group">
+            <label>Code *</label>
+            <input name="code" class="input" value="${escapeHtml(dept?.code || '')}" placeholder="ENG" required />
+          </div>
+          <div class="form-group full">
+            <label>Manager Name</label>
+            <input name="manager_name" class="input" value="${escapeHtml(dept?.manager_name || '')}" />
+          </div>
+          <div class="form-group full">
+            <label>Description</label>
+            <textarea name="description" rows="3" class="textarea">${escapeHtml(dept?.description || '')}</textarea>
+          </div>
+        </form>
+      `, async () => {
+        const form = document.getElementById('entity-form');
+        if (!form.reportValidity()) return;
+        await saveEntity('departments', id, Object.fromEntries(new FormData(form).entries()));
+      });
+    }
+
+    // ---------------- POSITIONS ----------------
+    function renderPositions(container) {
+      const f = state.filters.positions;
+      const filtered = state.positions.filter((p) => {
+        const q = f.search.toLowerCase();
+        const matchSearch = !q || p.title.toLowerCase().includes(q);
+        const matchDept = !f.department || p.department_id === f.department;
+        const matchLevel = !f.level || p.level === f.level;
+        return matchSearch && matchDept && matchLevel;
+      });
+
+      container.innerHTML = `
+        <div class="section-card">
+          <div class="toolbar">
+            <div class="toolbar-filters">
+              <div class="search-box">
+                <i data-lucide="search"></i>
+                <input id="pos-search" class="input" placeholder="Search position title..." value="${escapeHtml(f.search)}" />
+              </div>
+              <select id="pos-filter-dept" class="select filter-select">
+                <option value="">All Departments</option>
+                ${state.departments.map((d) => `<option value="${d.id}" ${f.department === d.id ? 'selected' : ''}>${escapeHtml(d.name)}</option>`).join('')}
+              </select>
+              <select id="pos-filter-level" class="select filter-select">
+                <option value="">All Levels</option>
+                ${['Junior', 'Mid-Level', 'Senior', 'Lead', 'Executive'].map((l) => `<option value="${l}" ${f.level === l ? 'selected' : ''}>${l}</option>`).join('')}
+              </select>
+            </div>
+            <button id="add-pos-btn" class="btn btn-primary"><i data-lucide="plus" width="16" height="16"></i>Add Position</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Department</th>
+                  <th>Level</th>
+                  <th>Salary Range</th>
+                  <th>Assigned Employees</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filtered.length ? filtered.map((p) => {
+                  const assigned = state.employees.filter((e) => e.position_id === p.id);
+                  const assignedHtml = assigned.length
+                    ? assigned.map((e) => `<span class="badge badge-violet" style="margin:2px;">${escapeHtml(e.full_name)}</span>`).join('')
+                    : '<span style="color:var(--text-muted); font-size:0.82rem;">None assigned</span>';
+                  return `
+                    <tr>
+                      <td style="font-weight:600;">${escapeHtml(p.title)}</td>
+                      <td>${escapeHtml(deptName(p.department_id))}</td>
+                      <td><span class="badge badge-blue">${escapeHtml(p.level)}</span></td>
+                      <td class="font-mono">₹${Number(p.min_salary || 0).toLocaleString()} – ₹${Number(p.max_salary || 0).toLocaleString()}</td>
+                      <td>${assignedHtml}</td>
+                      <td>
+                        <div class="actions-cell">
+                          <button class="btn btn-outline-violet" onclick="openAssignEmployeeModal('${p.id}')">Assign Employee</button>
+                          <button class="icon-btn" onclick="openPositionModal('${p.id}')" title="Edit"><i data-lucide="pencil" width="15" height="15"></i></button>
+                          <button class="icon-btn delete" onclick="deleteEntity('positions', '${p.id}')" title="Delete"><i data-lucide="trash-2" width="15" height="15"></i></button>
+                        </div>
+                      </td>
+                    </tr>`;
+                }).join('') : '<tr><td colspan="6" class="empty-state">No positions found.</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('pos-search').addEventListener('input', (e) => { state.filters.positions.search = e.target.value; renderRoute(); });
+      document.getElementById('pos-filter-dept').addEventListener('change', (e) => { state.filters.positions.department = e.target.value; renderRoute(); });
+      document.getElementById('pos-filter-level').addEventListener('change', (e) => { state.filters.positions.level = e.target.value; renderRoute(); });
+      document.getElementById('add-pos-btn').addEventListener('click', () => openPositionModal());
+    }
+
+    function openPositionModal(id = null) {
+      const pos = id ? state.positions.find((x) => x.id === id) : null;
+      openModal(pos ? 'Edit Position' : 'Add Position', `
+        <form id="entity-form" class="form-grid">
+          <div class="form-group">
+            <label>Position Title *</label>
+            <input name="title" class="input" value="${escapeHtml(pos?.title || '')}" required />
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <select name="department_id" class="select">
+              <option value="">Unassigned</option>
+              ${state.departments.map((d) => `<option value="${d.id}" ${pos?.department_id === d.id ? 'selected' : ''}>${escapeHtml(d.name)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Level</label>
+            <select name="level" class="select">
+              ${['Junior', 'Mid-Level', 'Senior', 'Lead', 'Executive'].map((l) => `<option value="${l}" ${(pos?.level || 'Mid-Level') === l ? 'selected' : ''}>${l}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Min Salary (₹)</label>
+            <input name="min_salary" type="number" step="0.01" class="input" value="${pos?.min_salary ?? 0}" />
+          </div>
+          <div class="form-group">
+            <label>Max Salary (₹)</label>
+            <input name="max_salary" type="number" step="0.01" class="input" value="${pos?.max_salary ?? 0}" />
+          </div>
+          <div class="form-group full">
+            <label>Description</label>
+            <textarea name="description" rows="2" class="textarea">${escapeHtml(pos?.description || '')}</textarea>
+          </div>
+        </form>
+      `, async () => {
+        const form = document.getElementById('entity-form');
+        if (!form.reportValidity()) return;
+        const payload = Object.fromEntries(new FormData(form).entries());
+        payload.min_salary = Number(payload.min_salary || 0);
+        payload.max_salary = Number(payload.max_salary || 0);
+        await saveEntity('positions', id, payload);
+      });
+    }
+
+    function openAssignEmployeeModal(positionId) {
+      const pos = state.positions.find((p) => p.id === positionId);
+      openModal(`Assign Employee to ${pos ? pos.title : 'Position'}`, `
+        <form id="assign-form" class="form-grid">
+          <div class="form-group full">
+            <label>Select Employee *</label>
+            <select name="employee_id" class="select" required>
+              <option value="">Choose an employee...</option>
+              ${state.employees.map((e) => `<option value="${e.id}">${escapeHtml(e.full_name)} (${escapeHtml(e.employee_code)})</option>`).join('')}
+            </select>
+          </div>
+        </form>
+      `, async () => {
+        const form = document.getElementById('assign-form');
+        if (!form.reportValidity()) return;
+        const employeeId = new FormData(form).get('employee_id');
+        await apiFetch(`/api/employees/${employeeId}`, {
+          method: 'PUT',
+          body: JSON.stringify({ position_id: positionId })
+        });
+        closeModal();
+        showToast('Employee assigned to position');
+        await loadRouteData('positions');
+        renderRoute();
+      });
+    }
+
+    // ---------------- ATTENDANCE ----------------
+    function renderAttendance(container) {
+      const f = state.filters.attendance;
+      const filtered = state.attendance.filter((a) => {
+        const name = empName(a.employee_id).toLowerCase();
+        const matchSearch = !f.search || name.includes(f.search.toLowerCase());
+        const matchStatus = !f.status || a.status === f.status;
+        const matchFrom = !f.dateFrom || a.date >= f.dateFrom;
+        const matchTo = !f.dateTo || a.date <= f.dateTo;
+        return matchSearch && matchStatus && matchFrom && matchTo;
+      });
+
+      container.innerHTML = `
+        <div class="section-card">
+          <div class="toolbar">
+            <div class="toolbar-filters">
+              <div class="search-box">
+                <i data-lucide="search"></i>
+                <input id="att-search" class="input" placeholder="Search employee..." value="${escapeHtml(f.search)}" />
+              </div>
+              <select id="att-filter-status" class="select filter-select">
+                <option value="">All Statuses</option>
+                ${['Present', 'Late', 'Absent', 'Half Day'].map((s) => `<option value="${s}" ${f.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+              <input id="att-from" type="date" class="input" style="width:auto;" value="${f.dateFrom}" title="From date" />
+              <input id="att-to" type="date" class="input" style="width:auto;" value="${f.dateTo}" title="To date" />
+            </div>
+            <button id="add-att-btn" class="btn btn-primary"><i data-lucide="plus" width="16" height="16"></i>Log Attendance</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Date</th>
+                  <th>Check In</th>
+                  <th>Check Out</th>
+                  <th>Status</th>
+                  <th>Notes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filtered.length ? filtered.map((a) => `
+                  <tr>
+                    <td style="font-weight:600;">${escapeHtml(empName(a.employee_id))}</td>
+                    <td class="font-mono">${escapeHtml(a.date)}</td>
+                    <td class="font-mono">${escapeHtml(a.check_in || '—')}</td>
+                    <td class="font-mono">${escapeHtml(a.check_out || '—')}</td>
+                    <td>${statusBadge(a.status)}</td>
+                    <td style="color:var(--text-muted);">${escapeHtml(a.notes || '—')}</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="icon-btn" onclick="openAttendanceModal('${a.id}')" title="Edit"><i data-lucide="pencil" width="15" height="15"></i></button>
+                        <button class="icon-btn delete" onclick="deleteEntity('attendance', '${a.id}')" title="Delete"><i data-lucide="trash-2" width="15" height="15"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('') : '<tr><td colspan="7" class="empty-state">No attendance records found.</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('att-search').addEventListener('input', (e) => { state.filters.attendance.search = e.target.value; renderRoute(); });
+      document.getElementById('att-filter-status').addEventListener('change', (e) => { state.filters.attendance.status = e.target.value; renderRoute(); });
+      document.getElementById('att-from').addEventListener('change', (e) => { state.filters.attendance.dateFrom = e.target.value; renderRoute(); });
+      document.getElementById('att-to').addEventListener('change', (e) => { state.filters.attendance.dateTo = e.target.value; renderRoute(); });
+      document.getElementById('add-att-btn').addEventListener('click', () => openAttendanceModal());
+    }
+
+    function openAttendanceModal(id = null) {
+      const att = id ? state.attendance.find((x) => x.id === id) : null;
+      openModal(att ? 'Edit Attendance' : 'Log Attendance', `
+        <form id="entity-form" class="form-grid">
+          <div class="form-group full">
+            <label>Employee *</label>
+            <select name="employee_id" class="select" required>
+              <option value="">Select employee...</option>
+              ${state.employees.map((e) => `<option value="${e.id}" ${att?.employee_id === e.id ? 'selected' : ''}>${escapeHtml(e.full_name)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date *</label>
+            <input name="date" type="date" class="input" value="${att?.date || new Date().toISOString().slice(0, 10)}" required />
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status" class="select">
+              ${['Present', 'Late', 'Absent', 'Half Day'].map((s) => `<option value="${s}" ${(att?.status || 'Present') === s ? 'selected' : ''}>${s}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Check In</label>
+            <input name="check_in" type="time" class="input" value="${att?.check_in || ''}" />
+          </div>
+          <div class="form-group">
+            <label>Check Out</label>
+            <input name="check_out" type="time" class="input" value="${att?.check_out || ''}" />
+          </div>
+          <div class="form-group full">
+            <label>Notes</label>
+            <input name="notes" class="input" value="${escapeHtml(att?.notes || '')}" />
+          </div>
+        </form>
+      `, async () => {
+        const form = document.getElementById('entity-form');
+        if (!form.reportValidity()) return;
+        await saveEntity('attendance', id, Object.fromEntries(new FormData(form).entries()));
+      });
+    }
+
+    // ---------------- LEAVES ----------------
+    function renderLeaves(container) {
+      const f = state.filters.leaves;
+      const filtered = state.leaves.filter((l) => {
+        const name = empName(l.employee_id).toLowerCase();
+        const matchSearch = !f.search || name.includes(f.search.toLowerCase()) || (l.reason || '').toLowerCase().includes(f.search.toLowerCase());
+        const matchStatus = !f.status || l.status === f.status;
+        const matchType = !f.type || l.leave_type === f.type;
+        return matchSearch && matchStatus && matchType;
+      });
+
+      container.innerHTML = `
+        <div class="section-card">
+          <div class="toolbar">
+            <div class="toolbar-filters">
+              <div class="search-box">
+                <i data-lucide="search"></i>
+                <input id="leave-search" class="input" placeholder="Search employee or reason..." value="${escapeHtml(f.search)}" />
+              </div>
+              <select id="leave-filter-type" class="select filter-select">
+                <option value="">All Types</option>
+                ${['Annual', 'Sick', 'Casual', 'Maternity', 'Paternity', 'Unpaid'].map((t) => `<option value="${t}" ${f.type === t ? 'selected' : ''}>${t}</option>`).join('')}
+              </select>
+              <select id="leave-filter-status" class="select filter-select">
+                <option value="">All Statuses</option>
+                ${['Pending', 'Approved', 'Rejected'].map((s) => `<option value="${s}" ${f.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </div>
+            <button id="add-leave-btn" class="btn btn-primary"><i data-lucide="plus" width="16" height="16"></i>Request Leave</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Type</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Status</th>
+                  <th>Reason</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filtered.length ? filtered.map((l) => `
+                  <tr>
+                    <td style="font-weight:600;">${escapeHtml(empName(l.employee_id))}</td>
+                    <td><span class="badge badge-blue">${escapeHtml(l.leave_type)}</span></td>
+                    <td class="font-mono">${escapeHtml(l.start_date)}</td>
+                    <td class="font-mono">${escapeHtml(l.end_date)}</td>
+                    <td>${statusBadge(l.status)}</td>
+                    <td style="color:var(--text-muted);">${escapeHtml(l.reason || '—')}</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="icon-btn" onclick="openLeaveModal('${l.id}')" title="Edit"><i data-lucide="pencil" width="15" height="15"></i></button>
+                        <button class="icon-btn delete" onclick="deleteEntity('leaves', '${l.id}')" title="Delete"><i data-lucide="trash-2" width="15" height="15"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('') : '<tr><td colspan="7" class="empty-state">No leave requests found.</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('leave-search').addEventListener('input', (e) => { state.filters.leaves.search = e.target.value; renderRoute(); });
+      document.getElementById('leave-filter-type').addEventListener('change', (e) => { state.filters.leaves.type = e.target.value; renderRoute(); });
+      document.getElementById('leave-filter-status').addEventListener('change', (e) => { state.filters.leaves.status = e.target.value; renderRoute(); });
+      document.getElementById('add-leave-btn').addEventListener('click', () => openLeaveModal());
+    }
+
+    function openLeaveModal(id = null) {
+      const lv = id ? state.leaves.find((x) => x.id === id) : null;
+      openModal(lv ? 'Edit Leave Request' : 'Request Leave', `
+        <form id="entity-form" class="form-grid">
+          <div class="form-group">
+            <label>Employee *</label>
+            <select name="employee_id" class="select" required>
+              <option value="">Select employee...</option>
+              ${state.employees.map((e) => `<option value="${e.id}" ${lv?.employee_id === e.id ? 'selected' : ''}>${escapeHtml(e.full_name)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Leave Type *</label>
+            <select name="leave_type" class="select" required>
+              ${['Annual', 'Sick', 'Casual', 'Maternity', 'Paternity', 'Unpaid'].map((t) => `<option value="${t}" ${lv?.leave_type === t ? 'selected' : ''}>${t}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Start Date *</label>
+            <input name="start_date" type="date" class="input" value="${lv?.start_date || new Date().toISOString().slice(0, 10)}" required />
+          </div>
+          <div class="form-group">
+            <label>End Date *</label>
+            <input name="end_date" type="date" class="input" value="${lv?.end_date || new Date().toISOString().slice(0, 10)}" required />
+          </div>
+          <div class="form-group full">
+            <label>Status</label>
+            <select name="status" class="select">
+              ${['Pending', 'Approved', 'Rejected'].map((s) => `<option value="${s}" ${(lv?.status || 'Pending') === s ? 'selected' : ''}>${s}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Reason</label>
+            <textarea name="reason" rows="2" class="textarea">${escapeHtml(lv?.reason || '')}</textarea>
+          </div>
+        </form>
+      `, async () => {
+        const form = document.getElementById('entity-form');
+        if (!form.reportValidity()) return;
+        await saveEntity('leaves', id, Object.fromEntries(new FormData(form).entries()));
+      });
+    }
+
+    // ---------------- PAYROLL ----------------
+    function renderPayroll(container) {
+      const f = state.filters.payroll;
+      const periods = [...new Set(state.payroll.map((p) => p.pay_period).filter(Boolean))];
+      const filtered = state.payroll.filter((p) => {
+        const name = empName(p.employee_id).toLowerCase();
+        const matchSearch = !f.search || name.includes(f.search.toLowerCase());
+        const matchStatus = !f.status || p.status === f.status;
+        const matchPeriod = !f.period || p.pay_period === f.period;
+        return matchSearch && matchStatus && matchPeriod;
+      });
+
+      container.innerHTML = `
+        <div class="section-card">
+          <div class="toolbar">
+            <div class="toolbar-filters">
+              <div class="search-box">
+                <i data-lucide="search"></i>
+                <input id="pay-search" class="input" placeholder="Search employee..." value="${escapeHtml(f.search)}" />
+              </div>
+              <select id="pay-filter-period" class="select filter-select">
+                <option value="">All Periods</option>
+                ${periods.map((pr) => `<option value="${escapeHtml(pr)}" ${f.period === pr ? 'selected' : ''}>${escapeHtml(pr)}</option>`).join('')}
+              </select>
+              <select id="pay-filter-status" class="select filter-select">
+                <option value="">All Statuses</option>
+                ${['Pending', 'Processed', 'Paid'].map((s) => `<option value="${s}" ${f.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </div>
+            <button id="add-pay-btn" class="btn btn-primary"><i data-lucide="plus" width="16" height="16"></i>Generate Payroll</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Pay Period</th>
+                  <th>Basic</th>
+                  <th>Allowances</th>
+                  <th>Deductions</th>
+                  <th>Net Salary</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filtered.length ? filtered.map((p) => `
+                  <tr>
+                    <td style="font-weight:600;">${escapeHtml(empName(p.employee_id))}</td>
+                    <td class="font-mono">${escapeHtml(p.pay_period)}</td>
+                    <td class="font-mono">₹${Number(p.basic_salary || 0).toLocaleString()}</td>
+                    <td class="font-mono">₹${Number(p.allowances || 0).toLocaleString()}</td>
+                    <td class="font-mono">₹${Number(p.deductions || 0).toLocaleString()}</td>
+                    <td class="font-mono" style="font-weight:700; color:#4F46E5;">₹${Number(p.net_salary || 0).toLocaleString()}</td>
+                    <td>${statusBadge(p.status)}</td>
+                    <td>
+                      <div class="actions-cell">
+                        <button class="icon-btn" onclick="openPayrollModal('${p.id}')" title="Edit"><i data-lucide="pencil" width="15" height="15"></i></button>
+                        <button class="icon-btn delete" onclick="deleteEntity('payroll', '${p.id}')" title="Delete"><i data-lucide="trash-2" width="15" height="15"></i></button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('') : '<tr><td colspan="8" class="empty-state">No payroll records found.</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('pay-search').addEventListener('input', (e) => { state.filters.payroll.search = e.target.value; renderRoute(); });
+      document.getElementById('pay-filter-period').addEventListener('change', (e) => { state.filters.payroll.period = e.target.value; renderRoute(); });
+      document.getElementById('pay-filter-status').addEventListener('change', (e) => { state.filters.payroll.status = e.target.value; renderRoute(); });
+      document.getElementById('add-pay-btn').addEventListener('click', () => openPayrollModal());
+    }
+
+    function openPayrollModal(id = null) {
+      const pay = id ? state.payroll.find((x) => x.id === id) : null;
+      const defaultPeriod = new Date().toISOString().slice(0, 7);
+
+      openModal(pay ? 'Edit Payroll Record' : 'Generate Payroll', `
+        <form id="entity-form" class="form-grid">
+          <div class="form-group">
+            <label>Employee *</label>
+            <select id="pay-emp-select" name="employee_id" class="select" required>
+              <option value="">Select employee...</option>
+              ${state.employees.map((e) => `<option value="${e.id}" ${pay?.employee_id === e.id ? 'selected' : ''}>${escapeHtml(e.full_name)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pay Period (YYYY-MM) *</label>
+            <input name="pay_period" class="input" value="${escapeHtml(pay?.pay_period || defaultPeriod)}" required />
+          </div>
+          <div class="form-group">
+            <label>Basic Salary (₹) *</label>
+            <input id="pay-basic" name="basic_salary" type="number" step="0.01" class="input" value="${pay?.basic_salary ?? 0}" required />
+          </div>
+          <div class="form-group">
+            <label>Allowances (₹)</label>
+            <input name="allowances" type="number" step="0.01" class="input" value="${pay?.allowances ?? 0}" />
+          </div>
+          <div class="form-group">
+            <label>Deductions (₹)</label>
+            <input name="deductions" type="number" step="0.01" class="input" value="${pay?.deductions ?? 0}" />
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status" class="select">
+              ${['Pending', 'Processed', 'Paid'].map((s) => `<option value="${s}" ${(pay?.status || 'Pending') === s ? 'selected' : ''}>${s}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Payment Date</label>
+            <input name="payment_date" type="date" class="input" value="${pay?.payment_date || ''}" />
+          </div>
+        </form>
+      `, async () => {
+        const form = document.getElementById('entity-form');
+        if (!form.reportValidity()) return;
+        const payload = Object.fromEntries(new FormData(form).entries());
+        payload.basic_salary = Number(payload.basic_salary || 0);
+        payload.allowances = Number(payload.allowances || 0);
+        payload.deductions = Number(payload.deductions || 0);
+        await saveEntity('payroll', id, payload);
+      });
+
+      document.getElementById('pay-emp-select').addEventListener('change', async (e) => {
+        const empId = e.target.value;
+        if (!empId) return;
+        try {
+          const empRecord = await apiFetch(`/api/employees/${empId}`);
+          document.getElementById('pay-basic').value = empRecord.salary ?? 0;
+        } catch (err) {
+          showToast(err.message, true);
+        }
+      });
+    }
+
+    // ---------------- SHARED MODAL & CRUD ----------------
+    function openModal(title, bodyHtml, onSave) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-body').innerHTML = bodyHtml;
+      document.getElementById('modal-footer').innerHTML = `
+        <button id="modal-cancel-btn" class="btn btn-secondary">Cancel</button>
+        <button id="modal-save-btn" class="btn btn-primary">Save</button>
+      `;
+      document.getElementById('modal-backdrop').classList.remove('hidden');
+      document.getElementById('modal-cancel-btn').onclick = closeModal;
+      document.getElementById('modal-save-btn').onclick = async () => {
+        try {
+          await onSave();
+        } catch (err) {
+          showToast(err.message, true);
+        }
+      };
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      document.getElementById('modal-backdrop').classList.add('hidden');
+    }
+
+    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+
+    async function saveEntity(entity, id, payload) {
+      const url = id ? `/api/${entity}/${id}` : `/api/${entity}`;
+      const method = id ? 'PUT' : 'POST';
+      await apiFetch(url, { method, body: JSON.stringify(payload) });
+      closeModal();
+      showToast(id ? 'Updated successfully' : 'Created successfully');
+      await loadRouteData(state.route);
+      renderRoute();
+    }
+
+    async function deleteEntity(entity, id) {
+      if (!confirm('Are you sure you want to delete this record?')) return;
+      try {
+        await apiFetch(`/api/${entity}/${id}`, { method: 'DELETE' });
+        showToast('Deleted successfully');
+        await loadRouteData(state.route);
+        renderRoute();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    // ---------------- BOOTSTRAP ----------------
+    (function init() {
+      lucide.createIcons();
+      if (localStorage.getItem(TOKEN_KEY)) {
+        showApp();
+      } else {
+        showLogin();
+      }
+    })();
+  </script>
+</body>
+</html>
